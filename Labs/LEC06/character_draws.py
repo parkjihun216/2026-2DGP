@@ -8,6 +8,15 @@ boy = load_image('character.png')
 
 
 def draw_boy(x, y):
+    for event in get_events():
+        if event.type == SDL_QUIT:
+            close_canvas()
+            raise SystemExit
+
+        if event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
+            close_canvas()
+            raise SystemExit
+
     clear_canvas()
     boy.draw(x, y)
     update_canvas()
@@ -85,9 +94,8 @@ def move_triangle():
 
 
 while True:
-    move_triangle()
-    move_rectangle()
     move_circle()
-    break
+    move_rectangle()
+    move_triangle()
 
 close_canvas()
