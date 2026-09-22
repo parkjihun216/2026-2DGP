@@ -1,4 +1,5 @@
 from pico2d import *
+import math
 
 
 open_canvas(800, 600)
@@ -6,8 +7,21 @@ open_canvas(800, 600)
 boy = load_image('character.png')
 
 
+def draw_boy(x, y):
+    clear_canvas()
+    boy.draw(x, y)
+    update_canvas()
+    delay(0.01)
+
+
 def move_circle():
-    print('circle')
+    for degree in range(360):
+        theta = math.radians(degree)
+
+        x = 400 + 200 * math.cos(theta)
+        y = 300 + 200 * math.sin(theta)
+
+        draw_boy(x, y)
 
 
 def move_rectangle():
@@ -17,11 +31,6 @@ def move_rectangle():
 def move_triangle():
     print('triangle')
 
-
-clear_canvas()
-boy.draw(400, 300)
-update_canvas()
-delay(1)
 
 while True:
     move_circle()
