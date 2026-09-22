@@ -51,14 +51,43 @@ def move_rectangle():
     move_left()
 
 
+def move_a_to_b():
+    n = 120
+    for step in range(n + 1):
+        t = step / n
+        x = 100 + (700 - 100) * t
+        y = 100 + (100 - 100) * t
+        draw_boy(x, y)
+
+
+def move_b_to_c():
+    n = 100
+    for step in range(n + 1):
+        t = step / n
+        x = 700 + (400 - 700) * t
+        y = 100 + (500 - 100) * t
+        draw_boy(x, y)
+
+
+def move_c_to_a():
+    n = 100
+    for step in range(n + 1):
+        t = step / n
+        x = 400 + (100 - 400) * t
+        y = 500 + (100 - 500) * t
+        draw_boy(x, y)
+
+
 def move_triangle():
-    print('triangle')
+    move_a_to_b()
+    move_b_to_c()
+    move_c_to_a()
 
 
 while True:
-    move_circle()
-    move_rectangle()
     move_triangle()
+    move_rectangle()
+    move_circle()
     break
 
 close_canvas()
