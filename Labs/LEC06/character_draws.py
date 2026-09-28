@@ -5,9 +5,12 @@ open_canvas(800, 600)
 
 boy = load_image('character.png')
 
-clear_canvas()
-boy.draw(400, 300)
-update_canvas()
+while True:
+    for event in get_events():
+        pass
 
-delay(1)
+    clear_canvas()
+    boy.draw(400, 300)
+    update_canvas()
+
 close_canvas()
