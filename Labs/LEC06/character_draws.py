@@ -1,4 +1,5 @@
 from pico2d import *
+import math
 
 
 open_canvas(800, 600)
@@ -63,6 +64,12 @@ def move_rectangle():
     if running:
         move_left()
 
+
+degree = 0
+theta = math.radians(degree)
+x = 400 + 200 * math.cos(theta)
+y = 300 + 200 * math.sin(theta)
+draw_boy(x, y)
 
 while running:
     move_rectangle()
