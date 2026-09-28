@@ -35,28 +35,28 @@ def draw_boy(x, y):
     delay(FRAME_DELAY)
 
 
-def move_top():
+def move_top_edge():
     for x in range(50, 751, 5):
         if not running:
             break
         draw_boy(x, 550)
 
 
-def move_right():
+def move_right_edge():
     for y in range(550, 49, -5):
         if not running:
             break
         draw_boy(750, y)
 
 
-def move_bottom():
+def move_bottom_edge():
     for x in range(750, 49, -5):
         if not running:
             break
         draw_boy(x, 50)
 
 
-def move_left():
+def move_left_edge():
     for y in range(50, 551, 5):
         if not running:
             break
@@ -64,13 +64,13 @@ def move_left():
 
 
 def move_rectangle():
-    move_top()
+    move_top_edge()
     if running:
-        move_right()
+        move_right_edge()
     if running:
-        move_bottom()
+        move_bottom_edge()
     if running:
-        move_left()
+        move_left_edge()
 
 
 def move_circle():
