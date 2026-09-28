@@ -75,9 +75,22 @@ def move_circle():
         draw_boy(x, y)
 
 
+def move_a_to_b():
+    n = 100
+    for step in range(n + 1):
+        if not running:
+            break
+        t = step / n
+        x = 100 + (700 - 100) * t
+        y = 100 + (100 - 100) * t
+        draw_boy(x, y)
+
+
 move_circle()
 
 if running:
     move_rectangle()
+if running:
+    move_a_to_b()
 
 close_canvas()
