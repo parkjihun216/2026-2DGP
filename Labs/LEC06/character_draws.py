@@ -47,10 +47,19 @@ def move_bottom():
         draw_boy(x, 50)
 
 
+def move_left():
+    for y in range(50, 551, 5):
+        if not running:
+            break
+        draw_boy(50, y)
+
+
 move_top()
 if running:
     move_right()
 if running:
     move_bottom()
+if running:
+    move_left()
 
 close_canvas()
