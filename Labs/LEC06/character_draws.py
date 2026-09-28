@@ -5,6 +5,9 @@ import math
 CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
 FRAME_DELAY = 0.01
+CIRCLE_CENTER_X = 400
+CIRCLE_CENTER_Y = 300
+CIRCLE_RADIUS = 200
 
 
 open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -75,8 +78,8 @@ def move_circle():
         if not running:
             break
         theta = math.radians(degree)
-        x = 400 + 200 * math.cos(theta)
-        y = 300 + 200 * math.sin(theta)
+        x = CIRCLE_CENTER_X + CIRCLE_RADIUS * math.cos(theta)
+        y = CIRCLE_CENTER_Y + CIRCLE_RADIUS * math.sin(theta)
         draw_boy(x, y)
 
 
