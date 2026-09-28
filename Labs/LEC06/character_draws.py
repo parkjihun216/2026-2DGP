@@ -8,6 +8,14 @@ FRAME_DELAY = 0.01
 CIRCLE_CENTER_X = 400
 CIRCLE_CENTER_Y = 300
 CIRCLE_RADIUS = 200
+RECT_LEFT = 50
+RECT_RIGHT = 750
+RECT_BOTTOM = 50
+RECT_TOP = 550
+RECT_STEP = 5
+TRIANGLE_A = (100, 100)
+TRIANGLE_B = (700, 100)
+TRIANGLE_C = (400, 500)
 
 
 open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -36,31 +44,31 @@ def draw_boy(x, y):
 
 
 def move_top_edge():
-    for x in range(50, 751, 5):
+    for x in range(RECT_LEFT, RECT_RIGHT + 1, RECT_STEP):
         if not running:
             break
-        draw_boy(x, 550)
+        draw_boy(x, RECT_TOP)
 
 
 def move_right_edge():
-    for y in range(550, 49, -5):
+    for y in range(RECT_TOP, RECT_BOTTOM - 1, -RECT_STEP):
         if not running:
             break
-        draw_boy(750, y)
+        draw_boy(RECT_RIGHT, y)
 
 
 def move_bottom_edge():
-    for x in range(750, 49, -5):
+    for x in range(RECT_RIGHT, RECT_LEFT - 1, -RECT_STEP):
         if not running:
             break
-        draw_boy(x, 50)
+        draw_boy(x, RECT_BOTTOM)
 
 
 def move_left_edge():
-    for y in range(50, 551, 5):
+    for y in range(RECT_BOTTOM, RECT_TOP + 1, RECT_STEP):
         if not running:
             break
-        draw_boy(50, y)
+        draw_boy(RECT_LEFT, y)
 
 
 def move_rectangle():
@@ -94,15 +102,15 @@ def move_line(x0, y0, x1, y1, steps):
 
 
 def move_a_to_b():
-    move_line(100, 100, 700, 100, 120)
+    move_line(*TRIANGLE_A, *TRIANGLE_B, 120)
 
 
 def move_b_to_c():
-    move_line(700, 100, 400, 500, 100)
+    move_line(*TRIANGLE_B, *TRIANGLE_C, 100)
 
 
 def move_c_to_a():
-    move_line(400, 500, 100, 100, 100)
+    move_line(*TRIANGLE_C, *TRIANGLE_A, 100)
 
 
 def move_triangle():
