@@ -7,6 +7,13 @@ boy = load_image('character.png')
 
 running = True
 
+
+def draw_boy(x, y):
+    clear_canvas()
+    boy.draw(x, y)
+    update_canvas()
+
+
 while running:
     for event in get_events():
         if event.type == SDL_QUIT:
@@ -14,8 +21,6 @@ while running:
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
 
-    clear_canvas()
-    boy.draw(400, 300)
-    update_canvas()
+    draw_boy(400, 300)
 
 close_canvas()
