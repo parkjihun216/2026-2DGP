@@ -9,18 +9,23 @@ running = True
 
 
 def draw_boy(x, y):
-    clear_canvas()
-    boy.draw(x, y)
-    update_canvas()
+    global running
 
-
-while running:
     for event in get_events():
         if event.type == SDL_QUIT:
             running = False
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
 
+    if not running:
+        return
+
+    clear_canvas()
+    boy.draw(x, y)
+    update_canvas()
+
+
+while running:
     draw_boy(400, 300)
 
 close_canvas()
