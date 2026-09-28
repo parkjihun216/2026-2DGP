@@ -2,7 +2,12 @@ from pico2d import *
 import math
 
 
-open_canvas(800, 600)
+CANVAS_WIDTH = 800
+CANVAS_HEIGHT = 600
+FRAME_DELAY = 0.01
+
+
+open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
 
 boy = load_image('character.png')
 
@@ -24,7 +29,7 @@ def draw_boy(x, y):
     clear_canvas()
     boy.draw(x, y)
     update_canvas()
-    delay(0.01)
+    delay(FRAME_DELAY)
 
 
 def move_top():
