@@ -64,6 +64,7 @@ def move_rectangle():
         move_left()
 
 
-move_rectangle()
+while running:
+    move_rectangle()
 
 close_canvas()
