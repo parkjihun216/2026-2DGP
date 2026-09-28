@@ -77,7 +77,7 @@ def move_circle():
 
 move_circle()
 
-while running:
+if running:
     move_rectangle()
 
 close_canvas()
