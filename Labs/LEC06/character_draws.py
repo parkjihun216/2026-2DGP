@@ -76,7 +76,7 @@ def move_circle():
 
 
 def move_a_to_b():
-    n = 100
+    n = 120
     for step in range(n + 1):
         if not running:
             break
