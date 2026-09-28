@@ -26,7 +26,13 @@ def draw_boy(x, y):
     delay(0.01)
 
 
-while running:
-    draw_boy(400, 300)
+def move_top():
+    for x in range(50, 751, 5):
+        if not running:
+            break
+        draw_boy(x, 550)
+
+
+move_top()
 
 close_canvas()
