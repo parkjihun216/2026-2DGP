@@ -23,6 +23,7 @@ def draw_boy(x, y):
     clear_canvas()
     boy.draw(x, y)
     update_canvas()
+    delay(0.01)
 
 
 while running:
