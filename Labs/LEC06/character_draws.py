@@ -54,12 +54,16 @@ def move_left():
         draw_boy(50, y)
 
 
-move_top()
-if running:
-    move_right()
-if running:
-    move_bottom()
-if running:
-    move_left()
+def move_rectangle():
+    move_top()
+    if running:
+        move_right()
+    if running:
+        move_bottom()
+    if running:
+        move_left()
+
+
+move_rectangle()
 
 close_canvas()
