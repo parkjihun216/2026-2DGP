@@ -116,11 +116,11 @@ def move_triangle():
         move_c_to_a()
 
 
-move_circle()
-
-if running:
-    move_rectangle()
-if running:
-    move_triangle()
+while running:
+    move_circle()
+    if running:
+        move_rectangle()
+    if running:
+        move_triangle()
 
 close_canvas()
