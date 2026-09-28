@@ -83,37 +83,26 @@ def move_circle():
         draw_boy(x, y)
 
 
-def move_a_to_b():
-    n = 120
-    for step in range(n + 1):
+def move_line(x0, y0, x1, y1, steps):
+    for step in range(steps + 1):
         if not running:
             break
-        t = step / n
-        x = 100 + (700 - 100) * t
-        y = 100 + (100 - 100) * t
+        t = step / steps
+        x = x0 + (x1 - x0) * t
+        y = y0 + (y1 - y0) * t
         draw_boy(x, y)
+
+
+def move_a_to_b():
+    move_line(100, 100, 700, 100, 120)
 
 
 def move_b_to_c():
-    n = 100
-    for step in range(n + 1):
-        if not running:
-            break
-        t = step / n
-        x = 700 + (400 - 700) * t
-        y = 100 + (500 - 100) * t
-        draw_boy(x, y)
+    move_line(700, 100, 400, 500, 100)
 
 
 def move_c_to_a():
-    n = 100
-    for step in range(n + 1):
-        if not running:
-            break
-        t = step / n
-        x = 400 + (100 - 400) * t
-        y = 500 + (100 - 500) * t
-        draw_boy(x, y)
+    move_line(400, 500, 100, 100, 100)
 
 
 def move_triangle():
