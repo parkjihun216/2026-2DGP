@@ -108,15 +108,19 @@ def move_c_to_a():
         draw_boy(x, y)
 
 
+def move_triangle():
+    move_a_to_b()
+    if running:
+        move_b_to_c()
+    if running:
+        move_c_to_a()
+
+
 move_circle()
 
 if running:
     move_rectangle()
 if running:
-    move_a_to_b()
-if running:
-    move_b_to_c()
-if running:
-    move_c_to_a()
+    move_triangle()
 
 close_canvas()
