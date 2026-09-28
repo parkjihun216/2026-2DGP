@@ -86,11 +86,24 @@ def move_a_to_b():
         draw_boy(x, y)
 
 
+def move_b_to_c():
+    n = 100
+    for step in range(n + 1):
+        if not running:
+            break
+        t = step / n
+        x = 700 + (400 - 700) * t
+        y = 100 + (500 - 100) * t
+        draw_boy(x, y)
+
+
 move_circle()
 
 if running:
     move_rectangle()
 if running:
     move_a_to_b()
+if running:
+    move_b_to_c()
 
 close_canvas()
