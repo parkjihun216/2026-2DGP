@@ -5,9 +5,12 @@ open_canvas(800, 600)
 
 boy = load_image('character.png')
 
-while True:
+running = True
+
+while running:
     for event in get_events():
-        pass
+        if event.type == SDL_QUIT:
+            running = False
 
     clear_canvas()
     boy.draw(400, 300)
