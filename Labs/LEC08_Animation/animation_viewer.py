@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pico2d import *
 
 
@@ -54,7 +56,8 @@ def handle_events():
 
 open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
 
-knight = load_image('night.png')
+image_path = Path(__file__).with_name('night.png')
+knight = load_image(str(image_path))
 
 running = True
 animation_index = 0
