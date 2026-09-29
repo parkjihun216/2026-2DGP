@@ -107,7 +107,7 @@ while running:
 
     clear_canvas()
     source_x, source_width = animation['frames'][frame]
-    draw_width = DRAW_HEIGHT
+    draw_width = DRAW_HEIGHT * source_width / FRAME_HEIGHT
     knight.clip_draw(
         source_x,
         animation['frame_y'],
