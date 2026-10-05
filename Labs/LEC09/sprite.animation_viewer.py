@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from time import perf_counter
+from math import pi, sin
 import sys
 
 import pico2d as p2d
@@ -15,6 +16,8 @@ PAUSE_DURATION = 1.0
 MOVE_SPEED = 180.0
 EDGE_MARGIN = 16
 MOVING_ANIMATIONS = frozenset(f'A{index:02}' for index in range(2, 10))
+JUMPING_ANIMATIONS = frozenset(('A08', 'A09'))
+JUMP_HEIGHT = 100.0
 SPRITE_PATH = Path(__file__).with_name('sonic-sprite.png')
 ANIMATIONS = (
     {
@@ -128,6 +131,8 @@ class Playback:
         self.pause_elapsed = 0.0
         self.x = CANVAS_WIDTH / 2
         self.direction = 1
+        self.motion_elapsed = 0.0
+        self.y_offset = 0.0
 
     def start_animation(self, index):
         self.animation_index = index
@@ -136,6 +141,8 @@ class Playback:
         self.completed_cycles = 0
         self.is_paused = False
         self.pause_elapsed = 0.0
+        self.motion_elapsed = 0.0
+        self.y_offset = 0.0
         if self.animation['name'] not in MOVING_ANIMATIONS:
             self.x = CANVAS_WIDTH / 2
             self.direction = 1
@@ -143,6 +150,11 @@ class Playback:
     def update_motion(self, elapsed):
         if self.animation['name'] not in MOVING_ANIMATIONS:
             return
+        self.motion_elapsed += elapsed
+        if self.animation['name'] in JUMPING_ANIMATIONS:
+            duration = len(self.animation['frames']) * FRAME_INTERVAL
+            jump_phase = (self.motion_elapsed % duration) / duration
+            self.y_offset = JUMP_HEIGHT * sin(pi * jump_phase)
         # Reflect the entire distance, including multiple crossings after a delay.
         span = RIGHT_BOUND - LEFT_BOUND
         phase = (self.x - LEFT_BOUND + self.direction * MOVE_SPEED * elapsed) % (2 * span)
@@ -193,10 +205,10 @@ class Playback:
                 self.frame_index = 0
 
 
-def draw_frame(sprite, frame, x=CANVAS_WIDTH / 2, direction=1):
+def draw_frame(sprite, frame, x=CANVAS_WIDTH / 2, direction=1, y_offset=0.0):
     left, bottom, width, height = frame
     # Keep the bottom anchor fixed when cropped frame heights change.
-    center_y = BASELINE_Y + height * SCALE / 2
+    center_y = BASELINE_Y + height * SCALE / 2 + y_offset
     flip = 'h' if direction < 0 else ''
     sprite.clip_composite_draw(left, bottom, width, height, 0, flip,
                               x, center_y, width * SCALE, height * SCALE)
@@ -220,8 +232,9 @@ def validate_animations(animations, image_width, image_height):
                     or bottom + height > image_height):
                 raise ValueError(f'{label}: crop {frame} is outside {image_width}x{image_height}')
             center_y = BASELINE_Y + height * SCALE / 2
+            top_offset = JUMP_HEIGHT if name in JUMPING_ANIMATIONS else 0
             if (width * SCALE > CANVAS_WIDTH or BASELINE_Y < 0
-                    or center_y + height * SCALE / 2 > CANVAS_HEIGHT):
+                    or center_y + height * SCALE / 2 + top_offset > CANVAS_HEIGHT):
                 raise ValueError(f'{label}: enlarged frame does not fit on the canvas')
 
 
@@ -258,7 +271,8 @@ def main():
             playback.update(current_time - previous_time)
             previous_time = current_time
             p2d.clear_canvas()
-            draw_frame(sprite, playback.frame, playback.x, playback.direction)
+            draw_frame(sprite, playback.frame, playback.x, playback.direction,
+                       playback.y_offset)
             p2d.update_canvas()
             render_time = perf_counter() - current_time
             wait_time = min(0.01, playback.time_remaining - render_time)
