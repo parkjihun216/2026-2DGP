@@ -134,7 +134,9 @@ class Playback:
         if self.is_paused:
             self.pause_elapsed += elapsed
             if self.pause_elapsed >= PAUSE_DURATION:
-                self.start_animation(self.animation_index)
+                next_index = self.animation_index + 1
+                if next_index < len(self.animations):
+                    self.start_animation(next_index)
             return
         self.frame_elapsed += elapsed
         if self.frame_elapsed < FRAME_INTERVAL:
