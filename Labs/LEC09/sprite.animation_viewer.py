@@ -12,6 +12,9 @@ SCALE = 4
 FRAME_INTERVAL = 0.1
 REPEAT_COUNT = 5
 PAUSE_DURATION = 1.0
+MOVE_SPEED = 180.0
+EDGE_MARGIN = 16
+MOVING_ANIMATIONS = frozenset(f'A{index:02}' for index in range(2, 10))
 SPRITE_PATH = Path(__file__).with_name('sonic-sprite.png')
 ANIMATIONS = (
     {
@@ -108,6 +111,10 @@ ANIMATIONS = (
 MAX_FRAME_HEIGHT = max(frame[3] for animation in ANIMATIONS
                        for frame in animation['frames'])
 BASELINE_Y = (CANVAS_HEIGHT - MAX_FRAME_HEIGHT * SCALE) / 2
+MAX_FRAME_WIDTH = max(frame[2] for animation in ANIMATIONS
+                      for frame in animation['frames'])
+LEFT_BOUND = EDGE_MARGIN + MAX_FRAME_WIDTH * SCALE / 2
+RIGHT_BOUND = CANVAS_WIDTH - LEFT_BOUND
 
 
 class Playback:
@@ -119,6 +126,8 @@ class Playback:
         self.completed_cycles = 0
         self.is_paused = False
         self.pause_elapsed = 0.0
+        self.x = CANVAS_WIDTH / 2
+        self.direction = 1
 
     def start_animation(self, index):
         self.animation_index = index
@@ -127,6 +136,25 @@ class Playback:
         self.completed_cycles = 0
         self.is_paused = False
         self.pause_elapsed = 0.0
+        if self.animation['name'] not in MOVING_ANIMATIONS:
+            self.x = CANVAS_WIDTH / 2
+            self.direction = 1
+
+    def update_motion(self, elapsed):
+        if self.animation['name'] not in MOVING_ANIMATIONS:
+            return
+        # Reflect the entire distance, including multiple crossings after a delay.
+        span = RIGHT_BOUND - LEFT_BOUND
+        phase = (self.x - LEFT_BOUND + self.direction * MOVE_SPEED * elapsed) % (2 * span)
+        if phase == 0:
+            self.x, self.direction = LEFT_BOUND, 1
+        elif phase == span:
+            self.x, self.direction = RIGHT_BOUND, -1
+        elif phase < span:
+            self.x = LEFT_BOUND + phase
+        else:
+            self.x = LEFT_BOUND + 2 * span - phase
+            self.direction *= -1
 
     @property
     def animation(self):
@@ -149,6 +177,7 @@ class Playback:
                 next_index = (self.animation_index + 1) % len(self.animations)
                 self.start_animation(next_index)
             return
+        self.update_motion(elapsed)
         self.frame_elapsed += elapsed
         if self.frame_elapsed < FRAME_INTERVAL:
             return
@@ -164,13 +193,13 @@ class Playback:
                 self.frame_index = 0
 
 
-def draw_frame(sprite, frame):
+def draw_frame(sprite, frame, x=CANVAS_WIDTH / 2, direction=1):
     left, bottom, width, height = frame
     # Keep the bottom anchor fixed when cropped frame heights change.
     center_y = BASELINE_Y + height * SCALE / 2
-    sprite.clip_draw(left, bottom, width, height,
-                     CANVAS_WIDTH / 2, center_y,
-                     width * SCALE, height * SCALE)
+    flip = 'h' if direction < 0 else ''
+    sprite.clip_composite_draw(left, bottom, width, height, 0, flip,
+                              x, center_y, width * SCALE, height * SCALE)
 
 
 def validate_animations(animations, image_width, image_height):
@@ -229,7 +258,7 @@ def main():
             playback.update(current_time - previous_time)
             previous_time = current_time
             p2d.clear_canvas()
-            draw_frame(sprite, playback.frame)
+            draw_frame(sprite, playback.frame, playback.x, playback.direction)
             p2d.update_canvas()
             render_time = perf_counter() - current_time
             wait_time = min(0.01, playback.time_remaining - render_time)
