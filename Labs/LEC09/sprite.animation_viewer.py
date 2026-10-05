@@ -8,6 +8,7 @@ CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
 SCALE = 4
 FRAME_INTERVAL = 0.1
+REPEAT_COUNT = 5
 SPRITE_PATH = Path(__file__).with_name('sonic-sprite.png')
 ANIMATIONS = (
     {
@@ -108,6 +109,8 @@ class Playback:
         self.animation_index = 0
         self.frame_index = 0
         self.frame_elapsed = 0.0
+        self.completed_cycles = 0
+        self.is_paused = False
 
     @property
     def animation(self):
@@ -118,12 +121,21 @@ class Playback:
         return self.animation['frames'][self.frame_index]
 
     def update(self, elapsed):
+        if self.is_paused:
+            return
         self.frame_elapsed += elapsed
         if self.frame_elapsed < FRAME_INTERVAL:
             return
         # Advance once so a delayed render never skips an unseen frame.
         self.frame_elapsed = 0.0
-        self.frame_index = (self.frame_index + 1) % len(self.animation['frames'])
+        self.frame_index += 1
+        if self.frame_index >= len(self.animation['frames']):
+            self.completed_cycles += 1
+            if self.completed_cycles == REPEAT_COUNT:
+                self.frame_index = len(self.animation['frames']) - 1
+                self.is_paused = True
+            else:
+                self.frame_index = 0
 
 
 def draw_frame(sprite, frame):
