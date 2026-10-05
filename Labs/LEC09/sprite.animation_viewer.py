@@ -7,6 +7,13 @@ import pico2d as p2d
 CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
 SPRITE_PATH = Path(__file__).with_name('sonic-sprite.png')
+FIRST_FRAME = (1, 447, 29, 39)
+
+
+def draw_frame(sprite, frame):
+    left, bottom, width, height = frame
+    sprite.clip_draw(left, bottom, width, height,
+                     CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
 
 
 def load_sprite():
@@ -33,7 +40,7 @@ def main():
         sprite = load_sprite()
         while handle_events():
             p2d.clear_canvas()
-            sprite.draw(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
+            draw_frame(sprite, FIRST_FRAME)
             p2d.update_canvas()
             p2d.delay(0.01)
     finally:
