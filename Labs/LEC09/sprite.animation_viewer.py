@@ -1,6 +1,7 @@
 """Play the Sonic sprite sheet with pico2d."""
 
 from pathlib import Path
+from time import perf_counter
 
 import pico2d as p2d
 
@@ -134,9 +135,8 @@ class Playback:
         if self.is_paused:
             self.pause_elapsed += elapsed
             if self.pause_elapsed >= PAUSE_DURATION:
-                next_index = self.animation_index + 1
-                if next_index < len(self.animations):
-                    self.start_animation(next_index)
+                next_index = (self.animation_index + 1) % len(self.animations)
+                self.start_animation(next_index)
             return
         self.frame_elapsed += elapsed
         if self.frame_elapsed < FRAME_INTERVAL:
@@ -184,9 +184,9 @@ def main():
         p2d.hide_lattice()
         sprite = load_sprite()
         playback = Playback()
-        previous_time = p2d.get_time()
+        previous_time = perf_counter()
         while handle_events():
-            current_time = p2d.get_time()
+            current_time = perf_counter()
             playback.update(current_time - previous_time)
             previous_time = current_time
             p2d.clear_canvas()
