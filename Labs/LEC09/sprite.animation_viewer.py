@@ -104,6 +104,10 @@ ANIMATIONS = (
     },
 )
 
+MAX_FRAME_HEIGHT = max(frame[3] for animation in ANIMATIONS
+                       for frame in animation['frames'])
+BASELINE_Y = (CANVAS_HEIGHT - MAX_FRAME_HEIGHT * SCALE) / 2
+
 
 class Playback:
     def __init__(self, animations=ANIMATIONS):
@@ -155,8 +159,10 @@ class Playback:
 
 def draw_frame(sprite, frame):
     left, bottom, width, height = frame
+    # Keep the bottom anchor fixed when cropped frame heights change.
+    center_y = BASELINE_Y + height * SCALE / 2
     sprite.clip_draw(left, bottom, width, height,
-                     CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2,
+                     CANVAS_WIDTH / 2, center_y,
                      width * SCALE, height * SCALE)
 
 
