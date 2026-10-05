@@ -9,6 +9,7 @@ CANVAS_HEIGHT = 600
 SCALE = 4
 FRAME_INTERVAL = 0.1
 REPEAT_COUNT = 5
+PAUSE_DURATION = 1.0
 SPRITE_PATH = Path(__file__).with_name('sonic-sprite.png')
 ANIMATIONS = (
     {
@@ -111,6 +112,15 @@ class Playback:
         self.frame_elapsed = 0.0
         self.completed_cycles = 0
         self.is_paused = False
+        self.pause_elapsed = 0.0
+
+    def start_animation(self, index):
+        self.animation_index = index
+        self.frame_index = 0
+        self.frame_elapsed = 0.0
+        self.completed_cycles = 0
+        self.is_paused = False
+        self.pause_elapsed = 0.0
 
     @property
     def animation(self):
@@ -122,6 +132,9 @@ class Playback:
 
     def update(self, elapsed):
         if self.is_paused:
+            self.pause_elapsed += elapsed
+            if self.pause_elapsed >= PAUSE_DURATION:
+                self.start_animation(self.animation_index)
             return
         self.frame_elapsed += elapsed
         if self.frame_elapsed < FRAME_INTERVAL:
