@@ -7,6 +7,7 @@ import pico2d as p2d
 CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
 SCALE = 4
+FRAME_INTERVAL = 0.1
 SPRITE_PATH = Path(__file__).with_name('sonic-sprite.png')
 ANIMATIONS = (
     {
@@ -101,6 +102,30 @@ ANIMATIONS = (
 )
 
 
+class Playback:
+    def __init__(self, animations=ANIMATIONS):
+        self.animations = animations
+        self.animation_index = 0
+        self.frame_index = 0
+        self.frame_elapsed = 0.0
+
+    @property
+    def animation(self):
+        return self.animations[self.animation_index]
+
+    @property
+    def frame(self):
+        return self.animation['frames'][self.frame_index]
+
+    def update(self, elapsed):
+        self.frame_elapsed += elapsed
+        if self.frame_elapsed < FRAME_INTERVAL:
+            return
+        # Advance once so a delayed render never skips an unseen frame.
+        self.frame_elapsed = 0.0
+        self.frame_index = (self.frame_index + 1) % len(self.animation['frames'])
+
+
 def draw_frame(sprite, frame):
     left, bottom, width, height = frame
     sprite.clip_draw(left, bottom, width, height,
@@ -131,9 +156,14 @@ def main():
     try:
         p2d.hide_lattice()
         sprite = load_sprite()
+        playback = Playback()
+        previous_time = p2d.get_time()
         while handle_events():
+            current_time = p2d.get_time()
+            playback.update(current_time - previous_time)
+            previous_time = current_time
             p2d.clear_canvas()
-            draw_frame(sprite, ANIMATIONS[0]['frames'][0])
+            draw_frame(sprite, playback.frame)
             p2d.update_canvas()
             p2d.delay(0.01)
     finally:
