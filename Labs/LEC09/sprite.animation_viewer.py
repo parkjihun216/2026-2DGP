@@ -8,7 +8,19 @@ CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
 SCALE = 4
 SPRITE_PATH = Path(__file__).with_name('sonic-sprite.png')
-FIRST_FRAME = (1, 447, 29, 39)
+ANIMATIONS = (
+    {
+        'name': 'A01',
+        'frames': (
+            (1, 447, 29, 39), (31, 447, 26, 38),
+            (58, 447, 28, 39), (86, 447, 30, 38),
+            (118, 447, 30, 38), (150, 447, 30, 38),
+            (182, 447, 29, 38), (211, 448, 29, 38),
+            (240, 448, 29, 38), (270, 448, 24, 32),
+            (302, 448, 29, 26),
+        ),
+    },
+)
 
 
 def draw_frame(sprite, frame):
@@ -43,7 +55,7 @@ def main():
         sprite = load_sprite()
         while handle_events():
             p2d.clear_canvas()
-            draw_frame(sprite, FIRST_FRAME)
+            draw_frame(sprite, ANIMATIONS[0]['frames'][0])
             p2d.update_canvas()
             p2d.delay(0.01)
     finally:
