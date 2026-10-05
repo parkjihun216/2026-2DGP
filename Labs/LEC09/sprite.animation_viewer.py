@@ -136,6 +136,12 @@ class Playback:
     def frame(self):
         return self.animation['frames'][self.frame_index]
 
+    @property
+    def time_remaining(self):
+        duration = PAUSE_DURATION if self.is_paused else FRAME_INTERVAL
+        elapsed = self.pause_elapsed if self.is_paused else self.frame_elapsed
+        return max(0.0, duration - elapsed)
+
     def update(self, elapsed):
         if self.is_paused:
             self.pause_elapsed += elapsed
@@ -225,7 +231,9 @@ def main():
             p2d.clear_canvas()
             draw_frame(sprite, playback.frame)
             p2d.update_canvas()
-            p2d.delay(0.01)
+            render_time = perf_counter() - current_time
+            wait_time = min(0.01, playback.time_remaining - render_time)
+            p2d.delay(max(0.0, wait_time))
     except (OSError, ValueError, RuntimeError) as error:
         print(f'Viewer error: {error}', file=sys.stderr)
         return 1
