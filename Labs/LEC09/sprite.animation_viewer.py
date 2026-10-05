@@ -1,0 +1,9 @@
+"""Play the Sonic sprite sheet with pico2d."""
+
+
+def main():
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())
