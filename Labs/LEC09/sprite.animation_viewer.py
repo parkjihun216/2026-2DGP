@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from time import perf_counter
+import sys
 
 import pico2d as p2d
 
@@ -166,13 +167,37 @@ def draw_frame(sprite, frame):
                      width * SCALE, height * SCALE)
 
 
+def validate_animations(animations, image_width, image_height):
+    if not animations:
+        raise ValueError('No animations are registered')
+    for animation in animations:
+        name = animation['name']
+        if not animation['frames']:
+            raise ValueError(f'{name}: no frames are registered')
+        for index, frame in enumerate(animation['frames'], start=1):
+            label = f'{name} frame {index}'
+            if len(frame) != 4 or not all(isinstance(value, int) for value in frame):
+                raise ValueError(f'{label}: expected four integer crop coordinates')
+            left, bottom, width, height = frame
+            if width <= 0 or height <= 0:
+                raise ValueError(f'{label}: frame dimensions must be positive')
+            if (left < 0 or bottom < 0 or left + width > image_width
+                    or bottom + height > image_height):
+                raise ValueError(f'{label}: crop {frame} is outside {image_width}x{image_height}')
+            center_y = BASELINE_Y + height * SCALE / 2
+            if (width * SCALE > CANVAS_WIDTH or BASELINE_Y < 0
+                    or center_y + height * SCALE / 2 > CANVAS_HEIGHT):
+                raise ValueError(f'{label}: enlarged frame does not fit on the canvas')
+
+
 def load_sprite():
     if not SPRITE_PATH.is_file():
         raise FileNotFoundError(f'Sprite sheet not found: {SPRITE_PATH}')
     try:
         return p2d.load_image(str(SPRITE_PATH))
     except Exception as error:
-        raise RuntimeError(f'Cannot load sprite sheet {SPRITE_PATH}: {error}') from error
+        reason = str(error) or p2d.SDL_GetError().decode('utf-8', errors='replace')
+        raise RuntimeError(f'Cannot load sprite sheet {SPRITE_PATH}: {reason}') from error
 
 
 def handle_events():
@@ -186,9 +211,11 @@ def handle_events():
 
 def main():
     p2d.open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
+    sprite = None
     try:
         p2d.hide_lattice()
         sprite = load_sprite()
+        validate_animations(ANIMATIONS, sprite.w, sprite.h)
         playback = Playback()
         previous_time = perf_counter()
         while handle_events():
@@ -199,7 +226,11 @@ def main():
             draw_frame(sprite, playback.frame)
             p2d.update_canvas()
             p2d.delay(0.01)
+    except (OSError, ValueError, RuntimeError) as error:
+        print(f'Viewer error: {error}', file=sys.stderr)
+        return 1
     finally:
+        del sprite
         p2d.close_canvas()
     return 0
 
